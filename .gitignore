@@ -260,3 +260,5 @@ cache/
 *.txt
 .vscode/
 bin/
+
+REF_IMAGE/
