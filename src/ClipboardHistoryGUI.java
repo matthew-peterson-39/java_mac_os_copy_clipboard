@@ -1,4 +1,4 @@
-import javax.swing.*;
+import javax.swing.*; 
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.datatransfer.StringSelection;
@@ -519,17 +519,55 @@ public class ClipboardHistoryGUI extends JDialog {
         return new Point(x, y);
     }
     
+    // Replace the existing refreshHistory() method in ClipboardHistoryGUI with this enhanced version:
     private void refreshHistory() {
-        listModel.clear();
-        for (ClipboardMonitor.ClipboardEntry entry : monitor.getHistory()) {
-            listModel.addElement(entry);
-        }
-        
-        if (listModel.getSize() > 0) {
-            historyList.setSelectedIndex(0);
-        }
+    listModel.clear();
+    
+    List<ClipboardMonitor.ClipboardEntry> currentHistory = monitor.getHistory();
+    for (ClipboardMonitor.ClipboardEntry entry : currentHistory) {
+        listModel.addElement(entry);
     }
     
+    // Select first item only if there are items
+    if (listModel.getSize() > 0) {
+        historyList.setSelectedIndex(0);
+    } else {
+        historyList.clearSelection();
+        
+        // If the window is visible and history is empty, show a helpful message
+        if (isVisible()) {
+            SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                    // Optionally show a temporary message that history is empty
+                    // You could add a label here or just leave it empty
+                }
+            });
+        }
+    }
+}
+    
+    /**
+     * Refreshes the history display (useful after clearing or external changes)
+     * This method can be called from outside to update the GUI
+     */
+    public void refreshHistoryDisplay() {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                refreshHistory();
+                
+                // Clear search field and show placeholder if window is visible
+                if (isVisible()) {
+                    searchField.setForeground(Color.GRAY);
+                    searchField.setText("Search clipboard history...");
+                    
+                    // If no history, ensure no selection
+                    if (listModel.getSize() == 0) {
+                        historyList.clearSelection();
+                    }
+                }
+            }
+        });
+    }   
     // Custom renderer for clipboard entries
     private static class ClipboardEntryRenderer extends DefaultListCellRenderer {
         @Override

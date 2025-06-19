@@ -35,7 +35,7 @@ public class AlternativeHotkeyManager implements NativeKeyListener {
             // Show user-friendly error message
             javax.swing.SwingUtilities.invokeLater(new Runnable() {
                 public void run() {
-                    javax.swing.JOptionPane.showMessageDialog(
+                    HighLevelDialogUtils.showHighLevelMessageDialog(
                         null,
                         "Could not register global hotkey (Cmd+Shift+C).\n" +
                         "Please grant accessibility permissions:\n\n" +

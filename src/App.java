@@ -220,10 +220,10 @@ public class App {
         hotkeyManager = new GlobalHotkeyManager(gui);
         hotkeyManager.initialize();
         
-        // Show startup information with troubleshooting
+        // Show startup information with troubleshooting using high-level dialog
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                JOptionPane.showMessageDialog(
+                HighLevelDialogUtils.showHighLevelMessageDialog(
                     null,
                     "Clipboard Manager is now running!\n\n" +
                     "• Copy text normally (Cmd+C)\n" +
@@ -312,30 +312,42 @@ public class App {
     }
     
     private void clearHistory() {
-        int result = JOptionPane.showConfirmDialog(
-            null,
-            "Are you sure you want to clear all clipboard history?",
-            "Clear History",
-            JOptionPane.YES_NO_OPTION,
-            JOptionPane.QUESTION_MESSAGE
-        );
+    // Use high-level dialog that appears above clipboard GUI
+    int result = HighLevelDialogUtils.showHighLevelConfirmDialog(
+        null,
+        "Are you sure you want to clear all clipboard history?",
+        "Clear History",
+        JOptionPane.YES_NO_OPTION,
+        JOptionPane.QUESTION_MESSAGE
+    );
+    
+    if (result == JOptionPane.YES_OPTION) {
+        // Use the monitor's clearHistory method instead of getHistory().clear()
+        monitor.clearHistory();
         
-        if (result == JOptionPane.YES_OPTION) {
-            monitor.getHistory().clear();
-            if (trayIcon != null) {
-                trayIcon.displayMessage(
-                    "History Cleared",
-                    "All clipboard history has been cleared.",
-                    TrayIcon.MessageType.INFO
-                );
-            }
+        // Refresh the GUI if it's currently visible
+        if (gui != null) {
+            SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                    gui.refreshHistoryDisplay();
+                }
+            });
+        }
+        
+        if (trayIcon != null) {
+            trayIcon.displayMessage(
+                "History Cleared",
+                "All clipboard history has been cleared.",
+                TrayIcon.MessageType.INFO
+            );
         }
     }
+}
     
     private void showAbout() {
         String currentHotkey = usingAlternativeHotkey ? "Cmd+Shift+C" : "Cmd+Shift+V";
         
-        JOptionPane.showMessageDialog(
+        HighLevelDialogUtils.showHighLevelMessageDialog(
             null,
             "<html><h2>Clipboard Manager</h2>" +
             "<p>Version 1.0</p>" +
@@ -366,7 +378,7 @@ public class App {
     }
     
     private void exitApplication() {
-        int result = JOptionPane.showConfirmDialog(
+        int result = HighLevelDialogUtils.showHighLevelConfirmDialog(
             null,
             "Are you sure you want to exit Clipboard Manager?",
             "Exit Application",
@@ -390,7 +402,6 @@ public class App {
             System.exit(0);
         }
     }
-    
     public static void main(String[] args) {
         // Ensure we're running on the Event Dispatch Thread
         SwingUtilities.invokeLater(new Runnable() {

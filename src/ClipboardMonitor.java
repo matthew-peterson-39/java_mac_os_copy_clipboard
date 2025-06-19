@@ -24,6 +24,17 @@ public class ClipboardMonitor {
         scheduler.scheduleAtFixedRate(this::checkClipboard, 0, 500, TimeUnit.MILLISECONDS);
         System.out.println("Clipboard monitoring started...");
     }
+
+    /**
+     * Clears all clipboard history entries
+     */
+    public void clearHistory() {
+        synchronized(history) {  // Thread-safe clearing
+            history.clear();
+            lastClipboardContent = "";  // Reset last content to avoid immediate re-add
+        }
+        System.out.println("Clipboard history cleared");
+    }
     
     private void checkClipboard() {
         try {

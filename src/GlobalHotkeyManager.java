@@ -35,10 +35,9 @@ public class GlobalHotkeyManager implements NativeKeyListener {
             System.err.println("There was a problem registering the native hook.");
             System.err.println(ex.getMessage());
             
-            // Show user-friendly error message
             javax.swing.SwingUtilities.invokeLater(new Runnable() {
                 public void run() {
-                    javax.swing.JOptionPane.showMessageDialog(
+                    HighLevelDialogUtils.showHighLevelMessageDialog(
                         null,
                         "Could not register global hotkey (Cmd+Shift+V).\n" +
                         "Please grant accessibility permissions:\n\n" +
